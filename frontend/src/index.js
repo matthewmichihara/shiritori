@@ -6,7 +6,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      vocab_cards: []
+      vocab_history: [],
+      my_turn: true
     };
   }
 
@@ -17,24 +18,32 @@ class App extends React.Component {
         'first_needs_to_match': 'asdf'
       };
 
-      const data1 = {
-          "name": "matt",
-          "job": "dev"
-        };
-
-      const url1 = "https://reqres.in/api/users"
       const url = "https://redmond-211121.appspot.com/nextwords"
 
       postData(url, data)
-        .then(data => alert(JSON.stringify(data)));
+        .then(next_vocab => {
+          const vocab_history = [ ...this.state.vocab_history, next_vocab ];
+          this.setState({
+            vocab_history: vocab_history,
+            my_turn:  !this.state.my_turn
+          });
+        });
     }
   }
 
   render() {
+    const vocab_cards = this.state.vocab_history.map(vocab_item => {
+      console.log("vocab item is " + vocab_item);
+      return (<li key={vocab_item.id}><VocabCard kanji={vocab_item.kana} /></li>);
+    });
+
     return (
       <div id='body'>
         <h1>Play Shiritori</h1>
         <input type='text' onKeyPress={this.handleKeyPress}/>
+        <ul>
+          {vocab_cards}
+        </ul>
       </div>
     )
   }
