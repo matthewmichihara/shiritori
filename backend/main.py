@@ -69,7 +69,7 @@ def play_word():
     # Pass up all already used vocab ids.
     used_ids = set(input_json.get('used_ids', []))
 
-    opponent_words = Word.query(Word.first_romaji == last_roma).fetch()
+    opponent_words = Word.query(Word.first_romaji == last_roma).fetch(limit=300)
     # Filter out the vocabs we've already seen and turn these model objects into
     # dicts that can be jsonified.
     valid_words = [w for w in opponent_words if w.id not in used_ids]
