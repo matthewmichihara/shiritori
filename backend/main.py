@@ -9,30 +9,27 @@ import random
 app = Flask(__name__)
 
 # CORS is so stupid.
-#CORS(app, origins=['*'])
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-class Vocabulary(ndb.Model):
+class Word(ndb.Model):
     # Include the entity id in here.
     id = ndb.ComputedProperty(lambda self: self.key.id())
-    kana = ndb.StringProperty()
+    jmdict_id = ndb.IntegerProperty()
     kanji = ndb.StringProperty()
+    kana = ndb.StringProperty()
     romaji = ndb.StringProperty()
     english = ndb.StringProperty()
-    first = ndb.StringProperty()
-    last = ndb.StringProperty()
+    first_romaji = ndb.StringProperty()
+    last_romaji = ndb.StringProperty()
 
 @app.route('/')
 def hello():
-    return "hellllloooooooooooooooooooooooooooooooooo world!"
+    return "Running"
 
 @app.route('/api/random')
-def random_words():
-    vocab_list = Vocabulary.query().fetch()
-
-    kanas = [v.kana for v in vocab_list]
-
-    return 'kanas: {}'.format(kanas)
+def random_word():
+    random_word = Word.query().get()
+    return jsonify(random_word.to_dict())
 
 @app.route('/api/playword', methods=['POST'])
 def play_word():
@@ -54,7 +51,7 @@ def play_word():
 
     # Check that word matches ending of previous word and
     # that it is a valid word TODO
-    your_word = Vocabulary.query(Vocabulary.romaji == word_roma).get()
+    your_word = Word.query(Word.romaji == word_roma).get()
     word_matches = attempting_to_match_roma == first_roma
     
     if your_word is None or not word_matches:
@@ -72,7 +69,7 @@ def play_word():
     # Pass up all already used vocab ids.
     used_ids = set(input_json.get('used_ids', []))
 
-    opponent_words = Vocabulary.query(Vocabulary.first == last_kana).fetch()
+    opponent_words = Word.query(Word.first_romaji == last_roma).fetch()
     # Filter out the vocabs we've already seen and turn these model objects into
     # dicts that can be jsonified.
     valid_words = [w for w in opponent_words if w.id not in used_ids]
@@ -80,7 +77,7 @@ def play_word():
     resp = None
     if valid_words:
         opponent_word = random.choice(valid_words)
-        need_to_match = opponent_word.last
+        need_to_match = opponent_word.last_romaji
 
         resp = jsonify({
             'response_type': 'SUCCESS',

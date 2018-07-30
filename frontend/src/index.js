@@ -6,35 +6,50 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      vocab_history: [],
-      my_turn: true
+      word_history: [],
+      my_turn: true,
+      attempting_to_match: 'a'
     };
   }
 
   handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      const data = {
-        'word': e.target.value,
-        'first_needs_to_match': 'asdf'
-      };
-
-      const url = "https://redmond-211121.appspot.com/nextwords"
-
-      postData(url, data)
-        .then(next_vocab => {
-          const vocab_history = [ ...this.state.vocab_history, next_vocab ];
-          this.setState({
-            vocab_history: vocab_history,
-            my_turn:  !this.state.my_turn
-          });
-        });
+    if (e.key !== 'Enter') {
+      return;
     }
+
+    const data = {
+      'input_word': e.target.value,
+      'attempting_to_match': this.state.attempting_to_match // TODO make the server handle empty here
+    };
+
+    const url = "https://redmond-211121.appspot.com/api/playword"
+
+    postData(url, data)
+      .then(resp_json => {
+        const response_type = resp_json.response_type
+        if (response_type !== 'SUCCESS') {
+          return;
+        }
+
+        const your_word = resp_json.your_word;
+        const opponent_word = resp_json.opponent_word;
+        const word_history = [ opponent_word, your_word, ...this.state.word_history ];
+        this.setState({
+          word_history: word_history,
+          my_turn: this.state.my_turn, // TODO this makes no sense.
+          attempting_to_match: opponent_word.last_romaji
+        });
+      });
   }
 
   render() {
-    const vocab_cards = this.state.vocab_history.map(vocab_item => {
-      console.log("vocab item is " + vocab_item);
-      return (<li key={vocab_item.id}><VocabCard kanji={vocab_item.kana} /></li>);
+    const word_cards = this.state.word_history.map(word => {
+      console.log("word is " + word);
+      return (
+        <li key={word.id}>
+          <WordCard kanji={word.kanji} kana={word.kana} english={word.english}/>
+        </li>
+      );
     });
 
     return (
@@ -42,17 +57,17 @@ class App extends React.Component {
         <h1>Play Shiritori</h1>
         <input type='text' onKeyPress={this.handleKeyPress}/>
         <ul>
-          {vocab_cards}
+          {word_cards}
         </ul>
       </div>
     )
   }
 }
 
-class VocabCard extends React.Component {
+class WordCard extends React.Component {
   render() {
     return (
-      <div id='vocab_card'>
+      <div className='word_card'>
         <p>Kanji: {this.props.kanji}</p>
         <p>Kana: {this.props.kana}</p>
         <p>English: {this.props.english}</p>
