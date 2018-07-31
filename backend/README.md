@@ -22,7 +22,7 @@
   
 # Response
 {
-  'response_type': 'SUCCESS' | 'INVALID_INPUT_WORD' | 'NO_MORE_WORDS'
+  'response_type': 'SUCCESS' | 'INVALID_INPUT_WORD' | 'NO_MORE_WORDS' | ...
 
   'should_match': 'た',
 
