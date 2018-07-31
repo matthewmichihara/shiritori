@@ -7,7 +7,7 @@ libraries:
     version: latest
 
 skip_files:
-  - resources/
+  - JMdict_e.xml
 
 handlers:
   - url: /.*

@@ -13,7 +13,7 @@
 # Request
 {
   'input_word': 'aka',
-  'attempting_to_match': 'あ',
+  'should_match': 'あ',
   'used_ids': [
     12345,
     22222
@@ -24,7 +24,7 @@
 {
   'response_type': 'SUCCESS' | 'INVALID_INPUT_WORD' | 'NO_MORE_WORDS'
 
-  'need_to_match': 'た',
+  'should_match': 'た',
 
   'your_word': {
     'id': 1234,
