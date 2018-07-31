@@ -2,13 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+const API_URL = 'https://redmond-211121.appspot.com/api'
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       word_history: [],
       my_turn: true,
-      should_match: 'a'
+      should_match: ''
     };
   }
 
@@ -19,10 +21,10 @@ class App extends React.Component {
 
     const data = {
       'input_word': e.target.value,
-      'should_match': this.state.should_match // TODO make the server handle empty here
+      'should_match': this.state.should_match
     };
 
-    const url = "https://redmond-211121.appspot.com/api/playword"
+    const url = API_URL + '/playword'
 
     postData(url, data)
       .then(resp_json => {
@@ -44,7 +46,6 @@ class App extends React.Component {
 
   render() {
     const word_cards = this.state.word_history.map(word => {
-      console.log("word is " + word);
       return (
         <li key={word.id}>
           <WordCard kanji={word.kanji} kana={word.kana} english={word.english}/>
@@ -65,9 +66,18 @@ class App extends React.Component {
 }
 
 class WordCard extends React.Component {
+  format(kana, kanji, english) {
+    if (kanji) {
+      return kana + " (" + kanji + "): " + english;
+    }
+
+    return kana + ": " + english;
+  }
+
   render() {
     return (
       <div className='word_card'>
+        <p>{this.format(this.props.kana, this.props.kanji, this.props.english)}</p>
         <p>Kanji: {this.props.kanji}</p>
         <p>Kana: {this.props.kana}</p>
         <p>English: {this.props.english}</p>
