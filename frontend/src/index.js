@@ -8,7 +8,7 @@ class App extends React.Component {
     this.state = {
       word_history: [],
       my_turn: true,
-      attempting_to_match: 'a'
+      should_match: 'a'
     };
   }
 
@@ -19,7 +19,7 @@ class App extends React.Component {
 
     const data = {
       'input_word': e.target.value,
-      'attempting_to_match': this.state.attempting_to_match // TODO make the server handle empty here
+      'should_match': this.state.should_match // TODO make the server handle empty here
     };
 
     const url = "https://redmond-211121.appspot.com/api/playword"
@@ -37,7 +37,7 @@ class App extends React.Component {
         this.setState({
           word_history: word_history,
           my_turn: this.state.my_turn, // TODO this makes no sense.
-          attempting_to_match: opponent_word.last_romaji
+          should_match: opponent_word.last_romaji
         });
       });
   }

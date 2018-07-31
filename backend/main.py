@@ -14,7 +14,7 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 class Word(ndb.Model):
     # Include the entity id in here.
     id = ndb.ComputedProperty(lambda self: self.key.id())
-    jmdict_id = ndb.StringProperty()
+    jmdict_id = ndb.IntegerProperty()
     kanji = ndb.StringProperty()
     kana = ndb.StringProperty()
     romaji = ndb.StringProperty()
@@ -97,11 +97,17 @@ def play_word():
     input_json = request.get_json()
 
     raw_input_word = input_json['input_word']
-    should_match = input_json['should_match']
+
+    # If this is None, match anything (first move).
+    should_match = input_json.get('should_match')
+    if not should_match:
+        should_match = None
 
     word_roma = romkan.to_roma(raw_input_word)
     word_kana = romkan.to_kana(raw_input_word)
-    should_match_roma = romkan.to_roma(should_match)
+    should_match_roma = None
+    if should_match is not None:
+        should_match_roma = romkan.to_roma(should_match)
 
     first_kana = word_kana[0]
     last_kana = word_kana[-1]
@@ -120,8 +126,8 @@ def play_word():
         )
 
     # Check that the word beginning matches the previous word ending.
-    word_matches = should_match_roma == first_roma
-    if not word_matches:
+    word_does_not_match = should_match_roma is not None and should_match_roma != first_roma
+    if word_does_not_match:
         return get_word_does_not_match_previous_ending_response(
             raw_input_word, 
             should_match_roma,
@@ -140,7 +146,14 @@ def play_word():
         )
 
     opponent_words = Word.query(Word.first_romaji == last_roma).fetch(limit=300)
-    valid_opponent_words = [w for w in opponent_words if w.id not in used_ids]
+    valid_opponent_words = []
+    for word in opponent_words:
+        if word.id in used_ids:
+            continue
+        if word.last_romaji == 'n':
+            continue
+        valid_opponent_words.append(word)
+
     if not valid_opponent_words:
         return get_no_more_words_response(
             raw_input_word,

@@ -1,6 +1,6 @@
 {
   "input_word": "aka",
-  "should_match": "あ",
+  "should_match": "",
   "used_ids": [
     4523678331043840
   ]
