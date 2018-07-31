@@ -103,6 +103,8 @@ def play_word():
     if not should_match:
         should_match = None
 
+    used_ids = set(input_json.get('used_ids', []))
+
     word_roma = romkan.to_roma(raw_input_word)
     word_kana = romkan.to_kana(raw_input_word)
     should_match_roma = None
@@ -136,7 +138,6 @@ def play_word():
         )
 
     # Check that the word has not already been used.
-    used_ids = set(input_json.get('used_ids', []))
     if your_word.id in used_ids:
         return get_word_already_used_response(
             raw_input_word, 
