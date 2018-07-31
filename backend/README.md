@@ -8,9 +8,10 @@
 1. `PYTHONIOENCODING=utf-8 python jmdict_parser.py -f JMdict_e.xml | GOOGLE_APPLICATION_CREDENTIALS=../../Redmond-b4502b6fa7e9.json python uploader.py`
 
 # API
-/api/playword
+- `/api/playword`
 
 # Request
+```
 {
   'input_word': 'aka',
   'should_match': 'あ',
@@ -19,8 +20,10 @@
     22222
   ]
 }
+```
   
 # Response
+```
 {
   'response_type': 'SUCCESS' | 'INVALID_INPUT_WORD' | 'NO_MORE_WORDS' | ...
 
@@ -44,5 +47,6 @@
     'last': 'た'
   }
 }
+```
  
 
