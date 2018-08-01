@@ -60,7 +60,7 @@ class App extends React.Component {
     });
 
     return (
-      <div id='body'>
+      <div className='body'>
         <h1>Play Shiritori</h1>
         <input type='text' className='searchbar' onKeyUp={this.handleKeyPress}/>
         <ul>
@@ -74,10 +74,18 @@ class App extends React.Component {
 class WordCard extends React.Component {
   format(kana, kanji, english) {
     if (kanji) {
-      return kana + " (" + kanji + "): " + english;
+      return (
+        <span className='word_line'>
+          <span className='kana'>{kana}</span> ({kanji} ): {english}
+        </span>
+      )
     }
 
-    return kana + ": " + english;
+    return (
+      <span className='word_line'>
+        <span className='kana'>{kana}</span>: {english}
+      </span>
+    )
   }
 
   render() {
