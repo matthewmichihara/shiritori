@@ -62,7 +62,7 @@ class App extends React.Component {
     return (
       <div id='body'>
         <h1>Play Shiritori</h1>
-        <input type='text' className='searchbar' onKeyPress={this.handleKeyPress}/>
+        <input type='text' className='searchbar' onKeyUp={this.handleKeyPress}/>
         <ul>
           {word_cards}
         </ul>
