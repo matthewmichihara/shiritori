@@ -73,52 +73,68 @@ class App extends React.Component {
 
 class WordCard extends React.Component {
   /**
-   * Returns a kana string with first and last characters span'd. If
+   * Returns a furigana'd japanese string with first and last characters span'd. If
    * there is only one character, just span that one.
    */
-  get_highlighted_kana(kana) {
+  get_formatted_japanese(kanji, kana) {
     const len = kana.length;
     const first = kana[0];
     const middle = kana.substr(1, kana.length-2);
     const last = kana.slice(-1);
 
-    if (len === 1) {
-      return (
-        <span className='kana'>
-          <span className='kana_boundary'>{first}</span>
-        </span>
-      )
-    }
-
-    return (
-      <span className='kana'>
-        <span className='kana_boundary'>{first}</span>
-        {middle}
-        <span className='kana_boundary'>{last}</span>
-      </span>
-    )
-  }
-
-  format(kana, kanji, english) {
     if (kanji) {
+      if (len === 1) {
+        return (
+          <span className='japanese'>
+            <ruby>
+              <rb>{kanji}</rb>
+              <rt>
+                <span className='kana_boundary'>{kana}</span>
+              </rt>
+            </ruby>
+          </span>
+        )
+      }
+
       return (
-        <span className='word_line'>
-          {this.get_highlighted_kana(kana)} ({kanji} ): {english}
+        <span className='japanese'>
+          <ruby>
+            <rb>{kanji}</rb>
+            <rt>
+              <span className='kana_boundary'>{first}</span>
+              {middle}
+              <span className='kana_boundary'>{last}</span>
+            </rt>
+          </ruby>
+        </span>
+      )
+    } else {
+      if (len === 1) {
+        return (
+          <span className='japanese'>
+            <span className='kana_boundary'>
+              {kana}
+            </span>
+          </span>
+        )
+      }
+
+      return (
+        <span className='japanese'>
+          <span className='kana_boundary'>{first}</span>
+          {middle}
+          <span className='kana_boundary'>{last}</span>
         </span>
       )
     }
-
-    return (
-      <span className='word_line'>
-        <span className='kana'>{kana}</span>: {english}
-      </span>
-    )
   }
 
   render() {
     return (
       <div className='word_card'>
-        <p>{this.format(this.props.kana, this.props.kanji, this.props.english)}</p>
+        <span className='word_line'>
+          {this.get_formatted_japanese(this.props.kanji, this.props.kana)}: {this.props.english}
+        </span>
       </div>
     )
   }
