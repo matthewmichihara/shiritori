@@ -23,7 +23,7 @@ class App extends React.Component {
     });
   }
 
-  handleKeyPress = (e) => {
+  handleKeyPress(e) {
     if (e.key !== 'Enter') {
       return;
     }
@@ -62,7 +62,7 @@ class App extends React.Component {
     return (
       <div className='body'>
         <h1>Play Shiritori</h1>
-        <input type='text' className='searchbar' onKeyUp={this.handleKeyPress}/>
+        <input type='text' className='searchbar' onKeyUp={(e) => this.handleKeyPress(e)}/>
         <ul>
           {word_cards}
         </ul>
@@ -72,11 +72,38 @@ class App extends React.Component {
 }
 
 class WordCard extends React.Component {
+  /**
+   * Returns a kana string with first and last characters span'd. If
+   * there is only one character, just span that one.
+   */
+  get_highlighted_kana(kana) {
+    const len = kana.length;
+    const first = kana[0];
+    const middle = kana.substr(1, kana.length-2);
+    const last = kana.slice(-1);
+
+    if (len === 1) {
+      return (
+        <span className='kana'>
+          <span className='kana_boundary'>{first}</span>
+        </span>
+      )
+    }
+
+    return (
+      <span className='kana'>
+        <span className='kana_boundary'>{first}</span>
+        {middle}
+        <span className='kana_boundary'>{last}</span>
+      </span>
+    )
+  }
+
   format(kana, kanji, english) {
     if (kanji) {
       return (
         <span className='word_line'>
-          <span className='kana'>{kana}</span> ({kanji} ): {english}
+          {this.get_highlighted_kana(kana)} ({kanji} ): {english}
         </span>
       )
     }

@@ -4,17 +4,21 @@
 
 .word_card {
   border: 1px solid #999;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .searchbar {
-  height: 36px;
+  height: 40px;
   width: 400px;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: bold;
-  padding: 0 8px
+  padding: 0 8px;
 }
 
 .kana {
   font-weight: bold;
+}
+
+.kana_boundary {
+  color: rgb(255,0,0);
 }
