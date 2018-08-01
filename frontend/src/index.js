@@ -14,6 +14,15 @@ class App extends React.Component {
     };
   }
 
+  updateState(word) {
+    const word_history = [ word, ...this.state.word_history ];
+    this.setState({
+      word_history: word_history,
+      my_turn: !this.state.my_turn,
+      should_match: word.last_romaji
+    });
+  }
+
   handleKeyPress = (e) => {
     if (e.key !== 'Enter') {
       return;
@@ -34,13 +43,10 @@ class App extends React.Component {
         }
 
         const your_word = resp_json.your_word;
+        this.updateState(your_word);
+        
         const opponent_word = resp_json.opponent_word;
-        const word_history = [ opponent_word, your_word, ...this.state.word_history ];
-        this.setState({
-          word_history: word_history,
-          my_turn: this.state.my_turn, // TODO this makes no sense.
-          should_match: opponent_word.last_romaji
-        });
+        setTimeout(() => this.updateState(opponent_word), 500);
       });
   }
 
@@ -56,7 +62,7 @@ class App extends React.Component {
     return (
       <div id='body'>
         <h1>Play Shiritori</h1>
-        <input type='text' onKeyPress={this.handleKeyPress}/>
+        <input type='text' className='searchbar' onKeyPress={this.handleKeyPress}/>
         <ul>
           {word_cards}
         </ul>
@@ -78,9 +84,6 @@ class WordCard extends React.Component {
     return (
       <div className='word_card'>
         <p>{this.format(this.props.kana, this.props.kanji, this.props.english)}</p>
-        <p>Kanji: {this.props.kanji}</p>
-        <p>Kana: {this.props.kana}</p>
-        <p>English: {this.props.english}</p>
       </div>
     )
   }
