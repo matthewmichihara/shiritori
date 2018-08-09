@@ -2,7 +2,8 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 from flask_cors import CORS
-from google.appengine.ext import ndb
+from google.cloud import datastore
+from collections import namedtuple
 import romkan
 import random
 
@@ -11,16 +12,21 @@ app = Flask(__name__)
 # CORS is so stupid.
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-class Word(ndb.Model):
-    # Include the entity id in here.
-    id = ndb.ComputedProperty(lambda self: self.key.id())
-    jmdict_id = ndb.IntegerProperty()
-    kanji = ndb.StringProperty()
-    kana = ndb.StringProperty()
-    romaji = ndb.StringProperty()
-    english = ndb.StringProperty()
-    first_romaji = ndb.StringProperty()
-    last_romaji = ndb.StringProperty()
+Word = namedtuple('Word', 'id jmdict_id kanji kana romaji english first_romaji last_romaji')
+
+def entity_to_word(entity):
+    word = Word(
+        entity.key.id,
+        entity['jmdict_id'],
+        entity['kanji'],
+        entity['kana'],
+        entity['romaji'],
+        entity['english'],
+        entity['first_romaji'],
+        entity['last_romaji']
+    )
+
+    return word
 
 def get_base_response(response_type, raw_input_word, should_match, used_ids, your_word=None, opponent_word=None):
     base_dict = {
@@ -31,10 +37,10 @@ def get_base_response(response_type, raw_input_word, should_match, used_ids, you
     }
 
     if your_word is not None:
-        base_dict['your_word'] = your_word.to_dict()
+        base_dict['your_word'] = your_word._asdict()
 
     if opponent_word is not None:
-        base_dict['opponent_word'] = opponent_word.to_dict()
+        base_dict['opponent_word'] = opponent_word._asdict()
 
     return jsonify(base_dict)
 
@@ -87,13 +93,10 @@ def get_success_response(raw_input_word, should_match, used_ids, your_word, oppo
 def hello():
     return "Running"
 
-@app.route('/api/random')
-def random_word():
-    random_word = Word.query().get()
-    return jsonify(random_word.to_dict())
-
 @app.route('/api/playword', methods=['POST'])
 def play_word():
+    client = datastore.Client()
+
     input_json = request.get_json()
 
     raw_input_word = input_json['input_word']
@@ -119,13 +122,18 @@ def play_word():
     last_roma = romkan.to_roma(last_kana)
 
     # Check that input word is a valid Japanese word.
-    your_word = Word.query(Word.romaji == word_roma).get()
-    if your_word is None:
+    query = client.query(kind='Word')
+    query.add_filter('romaji', '=', word_roma)
+    your_word_results = list(query.fetch())
+
+    if not your_word_results:
         return get_word_not_found_response(
             raw_input_word, 
             should_match_roma,
             used_ids
         )
+
+    your_word = entity_to_word(your_word_results[0])
 
     # Check that the word beginning matches the previous word ending.
     word_does_not_match = should_match_roma is not None and should_match_roma != first_roma
@@ -146,9 +154,12 @@ def play_word():
             your_word
         )
 
-    opponent_words = Word.query(Word.first_romaji == last_roma).fetch(limit=300)
+    query = client.query(kind='Word')
+    query.add_filter('first_romaji', '=', last_roma)
+    opponent_words = list(query.fetch(limit=300))
     valid_opponent_words = []
-    for word in opponent_words:
+    for word_entity in opponent_words:
+        word = entity_to_word(word_entity)
         if word.id in used_ids:
             continue
         if word.last_romaji == 'n':
