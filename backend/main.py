@@ -162,7 +162,7 @@ def play_word():
         word = entity_to_word(word_entity)
         if word.id in used_ids:
             continue
-        if word.last_romaji == 'n':
+        if word.last_romaji in ('n', '-'):
             continue
         valid_opponent_words.append(word)
 
