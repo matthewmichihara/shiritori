@@ -9,6 +9,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       response_type: 'SUCCESS',
+      search_text: '',
       word_history: [],
       my_turn: true,
       should_match: '',
@@ -20,6 +21,7 @@ class App extends React.Component {
     const word_history = [ word, ...this.state.word_history ];
     this.setState({
       response_type: response_type,
+      search_text: '',
       word_history: word_history,
       error_message: null,
       my_turn: !this.state.my_turn,
@@ -31,11 +33,24 @@ class App extends React.Component {
   updateError(response_type, raw_input_word, should_match, used_ids) {
     this.setState({
       response_type: response_type,
+      search_text: this.state.search_text,
       word_history: this.state.word_history,
       error_message: this.get_error_message(response_type, raw_input_word, should_match),
       my_turn: this.state.my_turn,
       should_match: should_match,
       used_ids: used_ids
+    });
+  }
+  
+  updateSearchText(search_text) {
+    this.setState({
+      response_type: this.state.response_type,
+      search_text: search_text,
+      word_history: this.state.word_history,
+      error_message: this.state.error_message,
+      my_turn: this.state.my_turn,
+      should_match: this.state.should_match,
+      used_ids: this.state.used_ids
     });
   }
 
@@ -57,13 +72,19 @@ class App extends React.Component {
     }
   }
 
+  handleChange(e) {
+    this.updateSearchText(e.target.value);
+  }
+
   handleKeyPress(e) {
     if (e.key !== 'Enter') {
       return;
     }
 
+    this.updateSearchText('');
+
     const data = {
-      'input_word': e.target.value,
+      'input_word': this.state.search_text,
       'should_match': this.state.should_match,
       'used_ids': this.state.used_ids
     };
@@ -100,7 +121,11 @@ class App extends React.Component {
     return (
       <div className='body'>
         <h1>Shiritori</h1>
-        <input type='text' className='searchbar' onKeyUp={(e) => this.handleKeyPress(e)}/>
+        <input type='text' 
+          className='searchbar'
+          value={this.state.search_text}
+          onChange={(e) => this.handleChange(e)}
+          onKeyPress={(e) => this.handleKeyPress(e)}/>
         {this.state.error_message !== null && <div className='error'><span>{this.state.error_message}</span></div>}
         <ul>
           {word_cards}
