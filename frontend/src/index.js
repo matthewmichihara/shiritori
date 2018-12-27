@@ -8,20 +8,53 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      response_type: 'SUCCESS',
       word_history: [],
       my_turn: true,
-      should_match: ''
+      should_match: '',
+      error_message: null
     };
   }
 
-  updateState(word, used_ids) {
+  updateSuccess(response_type, word, used_ids) {
     const word_history = [ word, ...this.state.word_history ];
     this.setState({
+      response_type: response_type,
       word_history: word_history,
+      error_message: null,
       my_turn: !this.state.my_turn,
       should_match: word.last_romaji,
       used_ids: used_ids
     });
+  }
+
+  updateError(response_type, raw_input_word, should_match, used_ids) {
+    this.setState({
+      response_type: response_type,
+      word_history: this.state.word_history,
+      error_message: this.get_error_message(response_type, raw_input_word, should_match),
+      my_turn: this.state.my_turn,
+      should_match: should_match,
+      used_ids: used_ids
+    });
+  }
+
+  get_error_message(response_type, raw_input_word, should_match) {
+    switch(response_type) {
+      case 'SUCCESS':
+        return null;
+      case 'INPUT_WORD_NOT_FOUND':
+        return "I don't think '" + raw_input_word + "' is a valid Japanese word.";
+      case 'INPUT_WORD_DOES_NOT_MATCH_PREVIOUS_ENDING':
+        return "'" + raw_input_word + "' needs to begin with '" + should_match + "'";
+      case 'INPUT_WORD_ALREADY_USED':
+        return "'" + raw_input_word + "' was already used!";
+      case 'NO_MORE_WORDS':
+        // TODO fix this, this is a win condition.
+        return 'There are no more words!';
+      default:
+        return 'Something went wrong.';
+    }
   }
 
   handleKeyPress(e) {
@@ -35,21 +68,23 @@ class App extends React.Component {
       'used_ids': this.state.used_ids
     };
 
-    const url = API_URL + '/playword'
+    const url = API_URL + '/playword';
 
     postData(url, data)
       .then(resp_json => {
-        const response_type = resp_json.response_type
-        if (response_type !== 'SUCCESS') {
-          return;
-        }
-
+        const response_type = resp_json.response_type;
+        const raw_input_word = resp_json.raw_input_word;
+        const should_match = resp_json.should_match;
         const your_word = resp_json.your_word;
         const opponent_word = resp_json.opponent_word;
         const used_ids = resp_json.used_ids;
 
-        this.updateState(your_word, used_ids);
-        setTimeout(() => this.updateState(opponent_word, used_ids), 500);
+        if (response_type === 'SUCCESS') {
+          this.updateSuccess(response_type, your_word, used_ids);
+          setTimeout(() => this.updateSuccess(response_type, opponent_word, used_ids), 500);
+        } else {
+          this.updateError(response_type, raw_input_word, should_match, used_ids);
+        }
       });
   }
 
@@ -61,11 +96,12 @@ class App extends React.Component {
         </li>
       );
     });
-
+    
     return (
       <div className='body'>
         <h1>Play Shiritori</h1>
         <input type='text' className='searchbar' onKeyUp={(e) => this.handleKeyPress(e)}/>
+        {this.state.error_message !== null && <div className='error'><span>{this.state.error_message}</span></div>}
         <ul>
           {word_cards}
         </ul>
