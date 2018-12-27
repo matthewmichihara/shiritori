@@ -7,6 +7,7 @@ from word import Word
 from word import entity_to_word
 from word import pick_your_word
 from word import pick_opponent_word
+from romaji_normalizer import normalize
 import responses
 import romkan
 import random
@@ -28,32 +29,39 @@ def play_word():
     raw_input_word = input_json['input_word']
     if raw_input_word:
         raw_input_word = raw_input_word.lower()
+    print('raw_input_word: {}'.format(raw_input_word))
 
     # If this is None, match anything (first move).
     should_match = input_json.get('should_match')
     if not should_match:
         should_match = None
+    print('should_match: {}'.format(should_match))
 
     used_ids = set(input_json.get('used_ids', []))
+    print('used_ids: {}'.format(used_ids))
 
     word_roma = romkan.to_roma(raw_input_word)
     word_kana = romkan.to_kana(raw_input_word)
     should_match_roma = None
     if should_match is not None:
         should_match_roma = romkan.to_roma(should_match)
+    print('word_roma: {} word_kana: {} should_match_roma: {}'.format(word_roma, word_kana, should_match_roma))
 
-    first_kana = word_kana[0]
-    last_kana = word_kana[-1]
+    first_kana = normalize(word_kana[0])
+    last_kana = normalize(word_kana[-1])
+    print('first_kana: {} last_kana: {}'.format(first_kana, last_kana))
 
     # Back to romaji. Using this as a tokenizer.
     first_roma = romkan.to_roma(first_kana)
     last_roma = romkan.to_roma(last_kana)
+    print('first_roma: {} last_roma: {}'.format(first_roma, last_roma))
 
     # Check that input word is a valid Japanese word.
     query = client.query(kind='Word')
     query.add_filter('romaji', '=', word_roma)
     your_word_results = list(query.fetch())
     your_word_entities = [entity_to_word(word) for word in your_word_results]
+    print('num your_word_entities: {}'.format(len(your_word_entities)))
 
     if not your_word_entities:
         return responses.word_not_found_response(
@@ -87,6 +95,7 @@ def play_word():
     query.add_filter('first_romaji', '=', last_roma)
     opponent_words = list(query.fetch(limit=100))
     opponent_word_entities = [entity_to_word(word) for word in opponent_words]
+    print('num opponent_word_entities: {}'.format(len(opponent_word_entities)))
     opponent_word = pick_opponent_word(opponent_word_entities, used_ids)
 
     if not opponent_word:

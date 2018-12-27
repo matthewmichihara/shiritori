@@ -4,6 +4,7 @@
 import xml.etree.ElementTree as ET
 import romkan
 from argparse import ArgumentParser
+from romaji_normalizer import normalize
 
 def get_kanji(entry):
     k_ele = entry.find('k_ele')
@@ -46,36 +47,14 @@ def get_english(entry):
 
     return gloss.text
 
-# Use the "big"(?) version of the small characters so that romkan doesn't prepend an 'x'.
-NORMALIZE_DICT = {
-    u"ぁ":u"あ",
-    u"ぃ":u"い",
-    u"ぅ":u"う",
-    u"ぇ":u"え",
-    u"ぉ":u"お",
-    u"ゃ":u"や",
-    u"ゅ":u"ゆ",
-    u"ょ":u"よ",
-    u"っ":u"つ",
-    u"ァ":u"ア",
-    u"ィ":u"イ",
-    u"ゥ":u"ウ",
-    u"ェ":u"エ",
-    u"ォ":u"オ",
-    u"ャ":u"ヤ",
-    u"ュ":u"ユ",
-    u"ョ":u"ヨ",
-    u"ッ":u"ツ"
-}
-
 def get_first_romaji(kana):
     first_kana = kana[0]
-    normalized = NORMALIZE_DICT.get(first_kana, first_kana)
+    normalized = normalize(first_kana)
     return romkan.to_roma(normalized)
 
 def get_last_romaji(kana):
     last_kana = kana[-1]
-    normalized = NORMALIZE_DICT.get(last_kana, last_kana)
+    normalized = normalize(last_kana)
     return romkan.to_roma(normalized)
 
 parser = ArgumentParser()

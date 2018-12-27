@@ -92,14 +92,14 @@ class App extends React.Component {
     const word_cards = this.state.word_history.map(word => {
       return (
         <li key={word.id}>
-          <WordCard kanji={word.kanji} kana={word.kana} english={word.english}/>
+          <WordCard kanji={word.kanji} kana={word.kana} romaji={word.romaji} english={word.english}/>
         </li>
       );
     });
     
     return (
       <div className='body'>
-        <h1>Play Shiritori</h1>
+        <h1>Shiritori</h1>
         <input type='text' className='searchbar' onKeyUp={(e) => this.handleKeyPress(e)}/>
         {this.state.error_message !== null && <div className='error'><span>{this.state.error_message}</span></div>}
         <ul>
@@ -172,7 +172,7 @@ class WordCard extends React.Component {
     return (
       <div className='word_card'>
         <span className='word_line'>
-          {this.get_formatted_japanese(this.props.kanji, this.props.kana)}: {this.props.english}
+          {this.get_formatted_japanese(this.props.kanji, this.props.kana)} ({this.props.romaji}): {this.props.english}
         </span>
       </div>
     )

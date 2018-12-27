@@ -42,7 +42,7 @@ def word_already_used_response(raw_input_word, should_match, used_ids, your_word
         your_word=your_word
     )
 
-def no_more_words_response(raw_input_word, should_match, used_ids, your_word, opponent_word):
+def no_more_words_response(raw_input_word, should_match, used_ids, your_word):
     return base_response(
         response_type='NO_MORE_WORDS',
         raw_input_word=raw_input_word,
