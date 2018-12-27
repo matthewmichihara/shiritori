@@ -2,10 +2,10 @@
 1. `virtualenv --python python3.7 .env`
 2. `source .env/bin/activate`
 3. `pip install -r requirements.txt`
-4. `gcloud app deploy`
+4. `gcloud app deploy --project redmond-211121 --version 1`
 
 # Populating the datastore
-1. `PYTHONIOENCODING=utf-8 python jmdict_parser.py -f JMdict_e.xml | GOOGLE_APPLICATION_CREDENTIALS=../../Redmond-b4502b6fa7e9.json python uploader.py`
+1. `python jmdict_parser.py -f JMdict_e.xml | GOOGLE_APPLICATION_CREDENTIALS=../../Redmond-b4502b6fa7e9.json python uploader.py`
 
 # API
 - `/api/playword`

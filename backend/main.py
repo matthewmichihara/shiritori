@@ -57,7 +57,7 @@ def play_word():
     print('first_roma: {} last_roma: {}'.format(first_roma, last_roma))
 
     # Check that input word is a valid Japanese word.
-    query = client.query(kind='Word')
+    query = client.query(kind='Word3')
     query.add_filter('romaji', '=', word_roma)
     your_word_results = list(query.fetch())
     your_word_entities = [entity_to_word(word) for word in your_word_results]
@@ -91,7 +91,7 @@ def play_word():
             your_word
         )
 
-    query = client.query(kind='Word')
+    query = client.query(kind='Word3')
     query.add_filter('first_romaji', '=', last_roma)
     opponent_words = list(query.fetch(limit=100))
     opponent_word_entities = [entity_to_word(word) for word in opponent_words]

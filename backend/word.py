@@ -1,8 +1,6 @@
 from collections import namedtuple
 import random
 
-from collections import namedtuple
-
 Word = namedtuple('Word', 'id jmdict_id kanji kana romaji english first_romaji last_romaji news1 news2 ichi1 ichi2 spec1 spec2')
 
 def entity_to_word(entity):
@@ -25,21 +23,15 @@ def entity_to_word(entity):
 
     return word
 
+def is_common(word):
+    return word.ichi1 or word.ichi2 or word.news1 or word.news2 or word.spec1 or word.spec2
+
 def pick_your_word(your_word_entities):
     if not your_word_entities:
         return None
 
     # Prioritize the common words.
-    common_words = []
-    for word in your_word_entities:
-        if (word.news1 == '1' or
-                word.news2 == '1' or
-                word.ichi1 == '1' or
-                word.ichi2 == '1' or
-                word.spec1 == '1' or
-                word.spec2 == '1'):
-            common_words.append(word)
-
+    common_words = [word for word in your_word_entities if is_common(word)]
     if common_words:
         return random.choice(common_words)
 
@@ -60,19 +52,8 @@ def pick_opponent_word(opponent_word_entities, used_ids):
         return None
 
     # Get the common words.
-    common_words = []
-    for word in valid_opponent_words:
-        if (word.news1 == '1' or
-                word.news2 == '1' or
-                word.ichi1 == '1' or
-                word.ichi2 == '1' or
-                word.spec1 == '1' or
-                word.spec2 == '1'):
-            common_words.append(word)
-
+    common_words = [word for word in valid_opponent_words if is_common(word)]
     if common_words:
         return random.choice(common_words)
 
     return random.choice(valid_opponent_words)
-
-

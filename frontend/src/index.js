@@ -197,7 +197,9 @@ class WordCard extends React.Component {
     return (
       <div className='word_card'>
         <span className='word_line'>
-          {this.get_formatted_japanese(this.props.kanji, this.props.kana)} ({this.props.romaji}): {this.props.english}
+          <a className='jisho_link' href={"https://jisho.org/search/" + this.props.kana}>
+            {this.get_formatted_japanese(this.props.kanji, this.props.kana)} <span className='romaji'>{this.props.romaji}</span>: {this.props.english}
+          </a>
         </span>
       </div>
     )
