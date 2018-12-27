@@ -10,6 +10,11 @@
 # API
 - `/api/playword`
 
+# Example curl
+```
+curl 'https://redmond-211121.appspot.com/api/playword' -H 'Content-Type: application/json; charset=utf-8' --data-binary '{"input_word":"dashi","should_match":"da"}' --compressed | python -m json.tool
+```
+
 # Request
 ```
 {
@@ -48,5 +53,14 @@
   }
 }
 ```
- 
 
+# Special datastore fields
+Rank the following entities higher because they are more common according to dictionary files.
+news1, news2, ichi1, ichi2, spec1, spec2
+- There are roughly 11,000 news1 matches
+- 10,000 news2
+- 8,000 ichi1
+- 17 ichi2
+- 1000 spec1
+- 2000 spec2 
+- Total there are 180,499 words.
