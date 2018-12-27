@@ -100,6 +100,8 @@ def play_word():
     input_json = request.get_json()
 
     raw_input_word = input_json['input_word']
+    if raw_input_word:
+        raw_input_word = raw_input_word.lower()
 
     # If this is None, match anything (first move).
     should_match = input_json.get('should_match')
