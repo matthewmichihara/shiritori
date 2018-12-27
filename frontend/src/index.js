@@ -14,12 +14,13 @@ class App extends React.Component {
     };
   }
 
-  updateState(word) {
+  updateState(word, used_ids) {
     const word_history = [ word, ...this.state.word_history ];
     this.setState({
       word_history: word_history,
       my_turn: !this.state.my_turn,
-      should_match: word.last_romaji
+      should_match: word.last_romaji,
+      used_ids: used_ids
     });
   }
 
@@ -30,7 +31,8 @@ class App extends React.Component {
 
     const data = {
       'input_word': e.target.value,
-      'should_match': this.state.should_match
+      'should_match': this.state.should_match,
+      'used_ids': this.state.used_ids
     };
 
     const url = API_URL + '/playword'
@@ -43,10 +45,11 @@ class App extends React.Component {
         }
 
         const your_word = resp_json.your_word;
-        this.updateState(your_word);
-        
         const opponent_word = resp_json.opponent_word;
-        setTimeout(() => this.updateState(opponent_word), 500);
+        const used_ids = resp_json.used_ids;
+
+        this.updateState(your_word, used_ids);
+        setTimeout(() => this.updateState(opponent_word, used_ids), 500);
       });
   }
 
