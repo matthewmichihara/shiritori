@@ -9,13 +9,8 @@
 # Populating the datastore
 1. `python jmdict_parser.py -f JMdict_e.xml | GOOGLE_APPLICATION_CREDENTIALS=../../Redmond-b4502b6fa7e9.json python uploader.py`
 
-# API
-- `/api/playword`
-
 # Example curl
-```
-curl 'https://redmond-211121.appspot.com/api/playword' -H 'Content-Type: application/json; charset=utf-8' --data-binary '{"input_word":"dashi","should_match":"da"}' --compressed | python -m json.tool
-```
+`curl 'https://playshiritori.com/api/playword' -H 'Content-Type: application/json; charset=utf-8' --data-binary '{"input_word":"neko"}' --compressed`
 
 # Request
 ```
