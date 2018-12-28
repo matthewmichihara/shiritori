@@ -1,8 +1,10 @@
 {
-  "name": "frontend",
+  "name": "shiritori",
   "version": "0.1.0",
-  "private": true,
+  "license": "MIT",
+  "homepage": "https://playshiritori.com",
   "dependencies": {
+    "github-fork-ribbon-css": "^0.2.1",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-scripts": "2.1.2"
