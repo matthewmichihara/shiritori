@@ -13,5 +13,11 @@
 .git
 .gitignore
 
+# Node source
+src/
+
 # Node.js dependencies:
 node_modules/
+
+# Dictionary files
+dictionary_files/
