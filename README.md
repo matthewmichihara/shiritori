@@ -1,59 +1,42 @@
-# Setup
-1. `virtualenv --python python3.7 .env`
-2. `source .env/bin/activate`
-3. `pip install -r requirements.txt`
-4. `npm install`
-5. `npm run build`
-4. `gcloud app deploy --version 1 --quiet`
+Shiritori
+=========
+A [Japanese word game]("https://en.wikipedia.org/wiki/Shiritori") built with Flask/React and deployed to Google App Engine.
 
-# Populating the datastore
-1. `python jmdict_parser.py -f JMdict_e.xml | GOOGLE_APPLICATION_CREDENTIALS=../../Redmond-b4502b6fa7e9.json python uploader.py`
-
-# Example curl
-`curl 'https://playshiritori.com/api/playword' -H 'Content-Type: application/json; charset=utf-8' --data-binary '{"input_word":"neko"}' --compressed`
-
-# Request
+Setup
+-----
 ```
-{
-  'input_word': 'aka',
-  'should_match': 'あ',
-  'used_ids': [
-    12345,
-    22222
-  ]
-}
-```
-  
-# Response
-```
-{
-  'response_type': 'SUCCESS' | 'INVALID_INPUT_WORD' | 'NO_MORE_WORDS' | ...
-
-  'should_match': 'た',
-
-  'your_word': {
-    'id': 1234,
-    'kanji': '赤',
-    'kana': 'あか',
-    'english': 'red',
-    'first': 'あ',
-    'last': 'か'
-  },
-
-  'opponent_word': {
-    'id': 22222,
-    'kanji': null,
-    'kana': 'かた',
-    'english': 'person',
-    'first': 'か',
-    'last': 'た'
-  }
-}
+virtualenv --python python3.7 .env
+source .env/bin/activate
+pip install -r requirements.txt
+npm install
 ```
 
-# Special datastore fields
+Local Development
+-----------------
+```
+// Start Flask server.
+python main.py
+
+// Start Node dev server.
+npm run start
+
+// Curl the API
+curl 'http://localhost:5000/api/playword' -H 'Content-Type: application/json; charset=utf-8' --data-binary '{"input_word":"neko"}' --compressed
+```
+
+Deploy
+------
+`npm run deploy`
+
+Populating the datastore
+------------------------
+This parses the dictionary file from https://www.edrdg.org/jmdict/j_jmdict.html and uploads to Cloud Datastore.
+`python jmdict_parser.py -f dictionary_files/JMdict_e.xml | GOOGLE_APPLICATION_CREDENTIALS=../../Redmond-b4502b6fa7e9.json python uploader.py`
+
+Special Fields
+--------------
 Rank the following entities higher because they are more common according to dictionary files.
-news1, news2, ichi1, ichi2, spec1, spec2
+`news1, news2, ichi1, ichi2, spec1, spec2`
 - There are roughly 11,000 news1 matches
 - 10,000 news2
 - 8,000 ichi1
