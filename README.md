@@ -4,7 +4,7 @@
 3. `pip install -r requirements.txt`
 4. `npm install`
 5. `npm run build`
-4. `gcloud app deploy --project redmond-211121 --version 1 --quiet`
+4. `gcloud app deploy --version 1 --quiet`
 
 # Populating the datastore
 1. `python jmdict_parser.py -f JMdict_e.xml | GOOGLE_APPLICATION_CREDENTIALS=../../Redmond-b4502b6fa7e9.json python uploader.py`

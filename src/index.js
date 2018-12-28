@@ -127,11 +127,23 @@ class App extends React.Component {
           onChange={(e) => this.handleChange(e)}
           onKeyPress={(e) => this.handleKeyPress(e)}/>
         {this.state.error_message !== null && <div className='error'><span>{this.state.error_message}</span></div>}
+        {this.state.word_history.length === 0 && <Education />}
         <ul>
           {word_cards}
         </ul>
       </div>
-    )
+    );
+  }
+}
+
+class Education extends React.Component {
+  render() {
+    return (
+      <div className='education'>
+        <p>Try typing in a Japanese word above like 'neko'.</p>
+        <p><a href="https://en.wikipedia.org/wiki/Shiritori">Shiritori</a> (しりとり) is a Japanese word game in which the players are required to say a word which begins with the final kana of the previous word.</p>
+      </div>
+    );
   }
 }
 
