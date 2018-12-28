@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const API_URL = 'https://redmond-211121.appspot.com/api'
+const API_URL = 'https://playshiritori.com/api'
 
 class App extends React.Component {
   constructor(props) {
