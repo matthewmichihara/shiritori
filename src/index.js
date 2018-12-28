@@ -2,7 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const API_URL = 'https://playshiritori.com/api'
+const API_URL = apiUrl() + '/api';
+function apiUrl() {
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:5000';
+  }
+  return 'https://playshiritori.com';
+}
 
 class App extends React.Component {
   constructor(props) {
