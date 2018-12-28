@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import request
+from flask_cors import CORS
 from google.cloud import datastore
 from collections import namedtuple
 from word import Word
@@ -12,6 +13,9 @@ import romkan
 import random
 
 app = Flask(__name__)
+
+# CORS is so stupid.
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 @app.route('/')
 def hello():

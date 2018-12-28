@@ -6,6 +6,7 @@ click==6.7
 dill==0.2.8.2
 enum34==1.1.6
 Flask==1.0.2
+Flask-Cors==3.0.6
 future==0.16.0
 gapic-google-cloud-datastore-v1==0.15.3
 google-api-core==1.2.1
