@@ -36,7 +36,8 @@
 }
 
 .romaji {
-  font-style: italic;
+  padding: 2px;
+  background: #ff000017;
 }
 
 .jisho_link {
