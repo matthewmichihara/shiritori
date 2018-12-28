@@ -1,6 +1,6 @@
 Shiritori
 =========
-A [Japanese word game]("https://en.wikipedia.org/wiki/Shiritori") built with Flask/React and deployed to Google App Engine.
+A [Japanese word game](https://en.wikipedia.org/wiki/Shiritori) built with Flask/React and deployed to Google App Engine.
 
 Setup
 -----
@@ -14,19 +14,22 @@ npm install
 Local Development
 -----------------
 ```
-// Start Flask server.
+// Start the Flask dev server.
 python main.py
 
-// Start Node dev server.
+// Start the Node dev server.
 npm run start
 
-// Curl the API
+// Test out the API.
 curl 'http://localhost:5000/api/playword' -H 'Content-Type: application/json; charset=utf-8' --data-binary '{"input_word":"neko"}' --compressed
 ```
 
 Deploy
 ------
-`npm run deploy`
+```
+// Build and deploy to App Engine.
+npm run deploy
+```
 
 Populating the datastore
 ------------------------
