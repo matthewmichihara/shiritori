@@ -14,7 +14,6 @@ import random
 
 app = Flask(__name__)
 
-# CORS is so stupid.
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 @app.route('/')
