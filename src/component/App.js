@@ -2,6 +2,7 @@ import React from 'react';
 import '../index.css';
 import Education from './Education';
 import WordCard from './WordCard';
+import Scores from './Scores';
 import post from '../logic/http';
 
 class App extends React.Component {
@@ -13,45 +14,53 @@ class App extends React.Component {
       word_history: [],
       my_turn: true,
       should_match: '',
-      error_message: null
+      error_message: null,
+      used_ids: [],
+      current_score: 0,
+      best_score: 0
     };
   }
 
   updateSuccess(response_type, word, used_ids) {
     const word_history = [ word, ...this.state.word_history ];
+
+    const updateScores = (current, best) => {
+      if (!this.state.my_turn) {
+        return {current: current, best: best};
+      }
+      const new_current = current + 1;
+      return {current: new_current, best: Math.max(new_current, best)};
+    };
+
+    const new_scores = updateScores(this.state.current_score, this.state.best_score);
+
+    // Update local storage.
+    localStorage.setItem('best_score', new_scores.best);
+
     this.setState({
       response_type: response_type,
       search_text: '',
       word_history: word_history,
-      error_message: null,
       my_turn: !this.state.my_turn,
       should_match: word.last_romaji,
-      used_ids: used_ids
+      error_message: null,
+      used_ids: used_ids,
+      current_score: new_scores.current,
+      best_score: new_scores.best
     });
   }
 
   updateError(response_type, raw_input_word, should_match, used_ids) {
     this.setState({
       response_type: response_type,
-      search_text: this.state.search_text,
-      word_history: this.state.word_history,
-      error_message: this.get_error_message(response_type, raw_input_word, should_match),
-      my_turn: this.state.my_turn,
       should_match: should_match,
+      error_message: this.get_error_message(response_type, raw_input_word, should_match),
       used_ids: used_ids
     });
   }
   
   updateSearchText(search_text) {
-    this.setState({
-      response_type: this.state.response_type,
-      search_text: search_text,
-      word_history: this.state.word_history,
-      error_message: this.state.error_message,
-      my_turn: this.state.my_turn,
-      should_match: this.state.should_match,
-      used_ids: this.state.used_ids
-    });
+    this.setState({search_text: search_text});
   }
 
   get_error_message(response_type, raw_input_word, should_match) {
@@ -109,6 +118,13 @@ class App extends React.Component {
       });
   }
 
+  componentDidMount() {
+    const best_score = localStorage.getItem('best_score')
+    if (best_score !== null) {
+      this.setState({best_score: best_score});
+    }
+  }
+
   render() {
     const word_cards = this.state.word_history.map(word => {
       return (
@@ -120,7 +136,7 @@ class App extends React.Component {
     
     return (
       <div className='body'>
-        <h1>Shiritori</h1>
+        <span><h1>Shiritori</h1> <Scores current={this.state.current_score} best={this.state.best_score} /></span>
         <input type='text' 
           className='searchbar'
           value={this.state.search_text}
