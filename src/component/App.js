@@ -1,7 +1,7 @@
 import React from 'react';
 import WordList from './word_list';
 import post from '../logic/http';
-import { Container, Divider, Header, Icon, Input, List, Message, Transition } from 'semantic-ui-react';
+import { Container, Divider, Header, Icon, Input, Message, Transition } from 'semantic-ui-react';
 
 class App extends React.Component {
   constructor(props) {
