@@ -35,7 +35,7 @@ Populating the datastore
 ------------------------
 This parses the dictionary file from https://www.edrdg.org/jmdict/j_jmdict.html and uploads to Cloud Datastore.
 ```
-python jmdict_parser.py -f dictionary_files/JMdict_e.xml | GOOGLE_APPLICATION_CREDENTIALS=../../Redmond-b4502b6fa7e9.json python uploader.py
+python jmdict_parser.py -f dictionary_files/JMdict_e.xml | GOOGLE_APPLICATION_CREDENTIALS=../Redmond-b4502b6fa7e9.json python uploader.py
 ```
 
 Special Fields
