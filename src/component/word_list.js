@@ -1,7 +1,8 @@
 import React from 'react';
-import '../index.css';
+import { List, Transition } from 'semantic-ui-react';
+import './word_list.css'
 
-class WordCard extends React.Component {
+class WordList extends React.Component {
   /**
    * Returns a furigana'd japanese string with first and last characters span'd. If
    * there is only one character, just span that one.
@@ -61,15 +62,19 @@ class WordCard extends React.Component {
 
   render() {
     return (
-      <div className='word_card'>
-        <span className='word_line'>
-          <a className='jisho_link' href={"https://jisho.org/search/" + this.props.kana}>
-            {this.get_formatted_japanese(this.props.kanji, this.props.kana)} <span className='romaji'>{this.props.romaji}</span>: {this.props.english}
-          </a>
-        </span>
-      </div>
-    )
+      <Transition.Group as={List} animation='glow' duration={500} divided size='huge' relaxed='very' verticalAlign='middle'>
+        {this.props.words.map(word => (
+          <List.Item key={word.id}>
+            <List.Content>
+              <a className='jisho_link' href={"https://jisho.org/search/" + word.kana}>
+                {this.get_formatted_japanese(word.kanji, word.kana)} <span className='romaji'>{word.romaji}</span>: {word.english}
+              </a>
+            </List.Content>
+          </List.Item>
+        ))}
+      </Transition.Group>
+    );
   }
 }
 
-export default WordCard;
+export default WordList;

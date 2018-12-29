@@ -1,0 +1,13 @@
+.kana_boundary {
+  color: rgb(255,0,0);
+}
+
+.romaji {
+  padding: 2px;
+  background: #ff000017;
+}
+
+.jisho_link {
+  color: inherit;
+  text-decoration: none;
+}

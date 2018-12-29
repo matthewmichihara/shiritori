@@ -1,9 +1,7 @@
 import React from 'react';
-import '../index.css';
-import Education from './Education';
-import WordCard from './WordCard';
-import Scores from './Scores';
+import WordList from './word_list';
 import post from '../logic/http';
+import { Container, Divider, Header, Icon, Input, List, Message, Transition } from 'semantic-ui-react';
 
 class App extends React.Component {
   constructor(props) {
@@ -17,7 +15,8 @@ class App extends React.Component {
       error_message: null,
       used_ids: [],
       current_score: 0,
-      best_score: 0
+      best_score: 0,
+      is_loading: false
     };
   }
 
@@ -37,16 +36,18 @@ class App extends React.Component {
     // Update local storage.
     localStorage.setItem('best_score', new_scores.best);
 
-    this.setState({
-      response_type: response_type,
-      search_text: '',
-      word_history: word_history,
-      my_turn: !this.state.my_turn,
-      should_match: word.last_romaji,
-      error_message: null,
-      used_ids: used_ids,
-      current_score: new_scores.current,
-      best_score: new_scores.best
+    this.setState((prev, props) => {
+      return {
+        response_type: response_type,
+        search_text: '',
+        word_history: word_history,
+        my_turn: !prev.my_turn,
+        should_match: word.last_romaji,
+        error_message: null,
+        used_ids: used_ids,
+        current_score: new_scores.current,
+        best_score: new_scores.best
+      };
     });
   }
 
@@ -100,21 +101,30 @@ class App extends React.Component {
 
     const url = this.props.apiUrl + '/playword';
 
+    this.setState({is_loading:true}); 
     post(url, data)
       .then(resp_json => {
         const response_type = resp_json.response_type;
         const raw_input_word = resp_json.raw_input_word;
         const should_match = resp_json.should_match;
-        const your_word = resp_json.your_word;
-        const opponent_word = resp_json.opponent_word;
+        // Tagging on some extra metadata.
+        const your_word = Object.assign({}, resp_json.your_word, {
+          your_word: true
+        });
+        // Tagging on some extra metadata.
+        const opponent_word = Object.assign({}, resp_json.opponent_word, {
+          your_word: false
+        });
         const used_ids = resp_json.used_ids;
 
         if (response_type === 'SUCCESS') {
           this.updateSuccess(response_type, your_word, used_ids);
-          setTimeout(() => this.updateSuccess(response_type, opponent_word, used_ids), 500);
+          setTimeout(() => this.updateSuccess(response_type, opponent_word, used_ids), 750);
         } else {
           this.updateError(response_type, raw_input_word, should_match, used_ids);
         }
+      }).finally(() => {
+        this.setState({is_loading: false});
       });
   }
 
@@ -126,28 +136,37 @@ class App extends React.Component {
   }
 
   render() {
-    const word_cards = this.state.word_history.map(word => {
-      return (
-        <li key={word.id}>
-          <WordCard kanji={word.kanji} kana={word.kana} romaji={word.romaji} english={word.english}/>
-        </li>
-      );
-    });
-    
     return (
-      <div className='body'>
-        <span><h1>Shiritori</h1> <Scores current={this.state.current_score} best={this.state.best_score} /></span>
-        <input type='text' 
-          className='searchbar'
+      <Container text>
+        <Divider hidden />
+        <Header as='h2'>
+          <Icon name='tree' />
+          <Header.Content>
+            shiritori
+            <Header.Subheader>Current: {this.state.current_score} Best: {this.state.best_score}</Header.Subheader>
+          </Header.Content>
+        </Header>
+        <Input 
+          fluid
+          size='massive'
+          loading={this.state.is_loading}
+          icon='search'
+          placeholder='Search...' 
           value={this.state.search_text}
           onChange={(e) => this.handleChange(e)}
           onKeyPress={(e) => this.handleKeyPress(e)}/>
-        {this.state.error_message !== null && <div className='error'><span>{this.state.error_message}</span></div>}
-        {this.state.word_history.length === 0 && <Education />}
-        <ul>
-          {word_cards}
-        </ul>
-      </div>
+        <Divider hidden />
+        <Transition visible={this.state.error_message !== null} animation='fly up' duration={500}>
+          <Message negative>{this.state.error_message}</Message>
+        </Transition>
+        <Transition visible={this.state.word_history.length === 0} animation='scale' duration={500}>
+          <Container text>
+            <Header as='h3'>Try typing in a Japanese word above like 'neko'.</Header>
+            <p><a href="https://en.wikipedia.org/wiki/Shiritori">Shiritori</a> (しりとり) is a Japanese word game in which the players are required to say a word which begins with the final kana of the previous word.</p>
+          </Container>
+        </Transition>
+        <WordList words={this.state.word_history} />
+      </Container>
     );
   }
 }
