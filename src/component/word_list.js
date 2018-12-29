@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Transition } from 'semantic-ui-react';
+import { Label, List, Transition } from 'semantic-ui-react';
 import './word_list.css'
 
 const WordList = ({words}) => {
@@ -80,10 +80,20 @@ const WordList = ({words}) => {
     );
   };
 
+  const word_avatar = (word) => {
+    const size = 'massive';
+    const emoji = word.your_word ? '😬' : '🤖';
+
+    return (<Label circular size={size}>{emoji}</Label>);
+  };
+
   return (
     <Transition.Group as={List} animated animation='fly right' duration={500} divided size='huge' relaxed='very' verticalAlign='middle'>
       {words.map(word => (
         <List.Item key={word.id}>
+          <List.Icon>
+            {word_avatar(word)}
+          </List.Icon>
           <List.Content>
             <a className='jisho_link' href={"https://jisho.org/search/" + word.kana}>
               {formatted_japanese(word.kanji, word.kana)} <span className='romaji'>
