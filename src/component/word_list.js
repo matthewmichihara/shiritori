@@ -81,7 +81,7 @@ const WordList = ({words}) => {
   };
 
   return (
-    <Transition.Group as={List} animation='fly right' duration={500} divided size='huge' relaxed='very' verticalAlign='middle'>
+    <Transition.Group as={List} animated animation='fly right' duration={500} divided size='huge' relaxed='very' verticalAlign='middle'>
       {words.map(word => (
         <List.Item key={word.id}>
           <List.Content>
