@@ -1,7 +1,7 @@
 from collections import namedtuple
 import random
 
-Word = namedtuple('Word', 'id jmdict_id kanji kana romaji english first_romaji last_romaji news1 news2 ichi1 ichi2 spec1 spec2')
+Word = namedtuple('Word', 'id jmdict_id kanji kana romaji english first_romaji last_romaji ichi1 ichi2 news1 news2 spec1 spec2')
 
 def entity_to_word(entity):
     word = Word(
@@ -13,10 +13,10 @@ def entity_to_word(entity):
         entity['english'],
         entity['first_romaji'],
         entity['last_romaji'],
-        entity['news1'],
-        entity['news2'],
         entity['ichi1'],
         entity['ichi2'],
+        entity['news1'],
+        entity['news2'],
         entity['spec1'],
         entity['spec2']
     )
@@ -57,3 +57,4 @@ def pick_opponent_word(opponent_word_entities, used_ids):
         return random.choice(common_words)
 
     return random.choice(valid_opponent_words)
+

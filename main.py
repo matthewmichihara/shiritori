@@ -1,16 +1,16 @@
+from collections import namedtuple
 from flask import Flask
 from flask import request
 from flask_cors import CORS
 from google.cloud import datastore
-from collections import namedtuple
-from word import Word
 from word import entity_to_word
 from word import pick_your_word
 from word import pick_opponent_word
+from word import Word
 from romaji_normalizer import normalize
+import random
 import responses
 import romkan
-import random
 
 app = Flask(__name__)
 
