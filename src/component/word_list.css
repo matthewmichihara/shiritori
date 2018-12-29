@@ -1,10 +1,5 @@
 .kana_boundary {
-  color: rgb(255,0,0);
-}
-
-.romaji {
-  padding: 2px;
-  background: #ff000017;
+  color: rgb(146, 0, 202);
 }
 
 .jisho_link {
