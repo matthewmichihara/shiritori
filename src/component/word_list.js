@@ -84,7 +84,7 @@ const WordList = ({words}) => {
     const size = 'massive';
     const emoji = word.your_word ? '😬' : '🤖';
 
-    return (<Label circular size={size}>{emoji}</Label>);
+    return (<Label size={size}>{emoji}</Label>);
   };
 
   return (
