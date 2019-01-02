@@ -15,7 +15,7 @@ Local Development
 -----------------
 ```
 // Start the Flask dev server.
-python main.py
+FLASK_APP=main.py FLASK_DEBUG=1 flask run
 
 // Start the Node dev server.
 npm run start

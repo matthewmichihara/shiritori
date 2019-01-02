@@ -5,7 +5,7 @@ from flask_cors import CORS
 from google.cloud import datastore
 from word import entity_to_word
 from word import pick_your_word
-from word import pick_opponent_word
+from word import fetch_opponent_word
 from word import Word
 from romaji_normalizer import normalize
 import random
@@ -28,11 +28,8 @@ exporter = stackdriver_exporter.StackdriverExporter(
 
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+# https://gcloud-python.readthedocs.io/en/latest/datastore/usage.html#
 client = datastore.Client()
-
-@app.route('/')
-def hello():
-    return "Running"
 
 @app.route('/api/playword', methods=['POST'])
 def play_word():
@@ -72,7 +69,7 @@ def play_word():
         print('first_roma: {} last_roma: {}'.format(first_roma, last_roma))
 
         your_word_entities = []
-        with play_word_span.span(name='query_your_word') as query_your_word_span:
+        with play_word_span.span(name='fetch your word by id') as query_your_word_span:
             # Check that input word is a valid Japanese word.
             query = client.query(kind='Word3')
             query.add_filter('romaji', '=', word_roma)
@@ -108,14 +105,7 @@ def play_word():
                 your_word
             )
 
-        opponent_word_entities = []
-        with play_word_span.span(name='query_opponent_word') as query_opponent_word_span:
-            query = client.query(kind='Word3')
-            query.add_filter('first_romaji', '=', last_roma)
-            opponent_words = list(query.fetch(limit=100))
-            opponent_word_entities = [entity_to_word(word) for word in opponent_words]
-        print('num opponent_word_entities: {}'.format(len(opponent_word_entities)))
-        opponent_word = pick_opponent_word(opponent_word_entities, used_ids)
+        opponent_word = fetch_opponent_word(last_roma, used_ids, play_word_span, client)
 
         if not opponent_word:
             return responses.no_more_words_response(
