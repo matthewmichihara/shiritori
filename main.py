@@ -38,7 +38,7 @@ def hello():
 def play_word():
     tracer = get_tracer(SHOULD_TRACE)
     
-    with tracer.span(name='play_word') as play_word_span:
+    with tracer.span(name='/api/playword') as play_word_span:
         input_json = request.get_json()
 
         raw_input_word = input_json['input_word']
