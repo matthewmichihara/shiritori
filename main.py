@@ -69,7 +69,7 @@ def play_word():
         print('first_roma: {} last_roma: {}'.format(first_roma, last_roma))
 
         your_word_entities = []
-        with play_word_span.span(name='fetch your word by id') as query_your_word_span:
+        with play_word_span.span(name='fetch your word by romaji') as query_your_word_span:
             # Check that input word is a valid Japanese word.
             query = client.query(kind='Word3')
             query.add_filter('romaji', '=', word_roma)
