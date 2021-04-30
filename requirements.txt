@@ -32,7 +32,7 @@ pyasn1-modules==0.2.2
 pytz==2018.5
 requests==2.20.0
 romkan==0.2.1
-rsa==3.4.2
+rsa==4.7
 six==1.11.0
 urllib3==1.23
 virtualenv==15.2.0
