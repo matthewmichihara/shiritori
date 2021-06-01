@@ -34,6 +34,6 @@ requests==2.20.0
 romkan==0.2.1
 rsa==3.4.2
 six==1.11.0
-urllib3==1.23
+urllib3==1.26.5
 virtualenv==15.2.0
 Werkzeug==0.14.1
